@@ -3,10 +3,9 @@ package ru.kata.spring.boot_security.demo.controllers;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import ru.kata.spring.boot_security.demo.entities.User;
 import ru.kata.spring.boot_security.demo.services.UserServiceImpl;
-
-import java.security.Principal;
 
 
 @Controller
@@ -18,10 +17,8 @@ public class UserController {
     }
 
     @GetMapping("/user")
-    public String showFormForUpdate(Model model, Principal principal) {
-        User user;
-        String username = principal.getName();
-        user = userServiceImpl.findByUsername(username);
+    public String showFormForUpdate(@RequestParam("id")long id, Model model) {
+        User user = userServiceImpl.readUser(id);
         model.addAttribute("user", user);
         return "user";
     }
