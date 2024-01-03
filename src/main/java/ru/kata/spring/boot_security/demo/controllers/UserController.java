@@ -19,7 +19,7 @@ public class UserController {
     }
 
     @GetMapping("/user")
-    public String showFormForUpdate(@RequestParam(name = "id", required = false) Long id, Model model, Principal principal) {
+    public String showUser(@RequestParam(name = "id", required = false) Long id, Model model, Principal principal) {
         User user;
         if (id != null) {
             user = userServiceImpl.readUser(id);
