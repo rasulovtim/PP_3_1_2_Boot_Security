@@ -15,12 +15,12 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name = "users")
@@ -28,20 +28,23 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @NotEmpty(message = "Username should not be empty")
-    @Size(min = 2, max = 30, message = "Username should be between 2 and 30 characters")
-    @Column
-    private String username;
-    @NotEmpty(message = "Username should not be empty")
-    @Size(min = 1, max = 60, message = "Password should be between 1 and 8 characters")
-    @Column
-    private String password;
-    @Email
+    @Email(message = "Email should be valid")
     @NotEmpty(message = "Email should not be empty")
-    @Column
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
+    @NotEmpty(message = "Name should not be empty")
+    @Size(min = 2, max = 30, message = "Name should be between 2 and 30 characters")
+    @Column(name = "name", nullable = false)
+    private String name;
+    @Column(name = "age", nullable = false)
+    @Min(value = 0, message = "Age should be greater than 0")
+    private Integer age;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @Column(name = "password", nullable = false)
+    private String password;
+
+
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
@@ -53,16 +56,14 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(String username, String password, String email, List<Role> roles) {
-        this.username = username;
-        this.password = password;
+    public User(String email, String name, Integer age, String password, List<Role> roles) {
         this.email = email;
+        this.name = name;
+        this.age = age;
+        this.password = password;
         this.roles = roles;
     }
-    /*@Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-    return roles;
-    }*/
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<Role> roles = this.getRoles();
@@ -72,48 +73,15 @@ public class User implements UserDetails {
         }
         return authorities;
     }
+
     @Override
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     @Override
     public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-
-    public String getEmail() {
         return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public List<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
     }
 
     @Override
@@ -136,38 +104,47 @@ public class User implements UserDetails {
         return true;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        User user = (User) o;
-
-        if (id != user.id) return false;
-        if (!Objects.equals(username, user.username)) return false;
-        if (!Objects.equals(password, user.password)) return false;
-        if (!Objects.equals(email, user.email)) return false;
-        return Objects.equals(roles, user.roles);
+    public long getId() {
+        return id;
     }
 
-    @Override
-    public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (username != null ? username.hashCode() : 0);
-        result = 31 * result + (password != null ? password.hashCode() : 0);
-        result = 31 * result + (email != null ? email.hashCode() : 0);
-        result = 31 * result + (roles != null ? roles.hashCode() : 0);
-        return result;
+    public void setId(long id) {
+        this.id = id;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-               "id=" + id +
-               ", username='" + username + '\'' +
-               ", password='" + password + '\'' +
-               ", email='" + email + '\'' +
-               ", roles='" + roles + '\'' +
-               '}';
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
     }
 }

@@ -1,4 +1,4 @@
-> ## 3.2 -  Bootstrap
+> ## 3.2 - Bootstrap
 
 - **Информация для запуска приложения**
 
@@ -7,8 +7,9 @@
 
   **Пользователи по умолчанию:**
 
-| Username | Password | Role  |
-|:--------:|:--------:|:-----:|
-|   user   |   user   | USER  |
-|  admin   |  admin   | ADMIN |
->>>>>>> 3_2_Bootstrap
+|    Username    | Password | Role  |
+|:--------------:|:--------:|:-----:|
+|  user@user.ru  |   user   | USER  |
+| admin@admin.ru |  admin   | ADMIN |
+
+> > > > > > > 3_2_Bootstrap

@@ -23,8 +23,8 @@ public class UsersInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         userService.createRolesIfNotExist();
-        userService.add(new User("user", "user", "user@mail.ru", List.of(roleRepository.getById(1L))));
-        userService.add(new User("admin", "admin", "admin@mail.ru", List.of(roleRepository.getById(2L))));
+        userService.add(new User("user@user.ru", "user", 25, "user", List.of(roleRepository.getById(1L))));
+        userService.add(new User("admin@admin.ru", "admin", 22, "admin", List.of(roleRepository.getById(2L))));
 
     }
 }

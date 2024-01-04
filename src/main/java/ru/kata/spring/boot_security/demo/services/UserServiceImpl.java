@@ -17,7 +17,7 @@ import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserDetailsService, UserService {
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
@@ -31,23 +31,23 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email);
         if (user == null) {
-            throw new UsernameNotFoundException("User " + username + " not found");
+            throw new UsernameNotFoundException("User " + email + " not found");
         }
         return user;
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<User> getAll() {
         return userRepository.findAll();
     }
 
     @Override
+    @Transactional
     public boolean add(User user) {
-        User userFromDB = userRepository.findByUsername(user.getUsername());
+        User userFromDB = userRepository.findByEmail(user.getEmail());
 
         if (userFromDB != null) {
             return false;
@@ -58,6 +58,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         return true;
     }
 
+    @Transactional
     public void createRolesIfNotExist() {
         // Проверка наличия ролей в базе данных
         if (roleRepository.findByName("ROLE_USER").isEmpty()) {
@@ -69,20 +70,19 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
 
+    @Transactional
     @Override
-    public boolean update(User updatedUser, List<Role> roles) {
-        User userFromDB = userRepository.findByUsername(updatedUser.getUsername());
+    public void update(User updatedUser) {
+        User user = readUser(updatedUser.getId());
+        String newPassword = updatedUser.getPassword();
 
-        if (userFromDB != null) {
-            userFromDB.setUsername(updatedUser.getUsername());
-            userFromDB.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
-            userFromDB.setEmail(updatedUser.getEmail());
-            userFromDB.setRoles(roles);
-            userRepository.save(userFromDB);
-            return true;
+        if (!newPassword.equals(user.getPassword()) && !newPassword.isEmpty()) {
+            updatedUser.setPassword(passwordEncoder.encode(newPassword));
         } else {
-            return false;
+            updatedUser.setPassword(user.getPassword());
         }
+
+        userRepository.save(updatedUser);
     }
 
     @Override
@@ -92,13 +92,14 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
+    @Transactional
     public void delete(long id) {
         userRepository.deleteById(id);
     }
 
     @Override
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
 }
