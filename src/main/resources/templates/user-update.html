@@ -1,6 +1,6 @@
 <!-- edit.html -->
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,9 +10,9 @@
 <body>
 
 <div class="container">
-  <center>
+  <div style="text-align: center;">
     <h1>Hi</h1>
-  </center>
+  </div>
 
   <h2>Edit user</h2>
 
@@ -35,16 +35,12 @@
     <div style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email error</div>
     <br/>
     <br/>
-      <div class="mb-3">
-        <label>Roles:</label>
-        <div th:each="role : ${allRoles}">
-          <input type="checkbox" th:id="${'role_' + role.id}"
-                 th:value="${role.id}" th:field="*{roles}"
-                 th:checked="${#lists.contains(user.roles, role)}"
-          />
-          <label th:for="${'role_' + role.id}" th:text="${role.name}"></label>
-        </div>
-      </div>
+    <div class="mb-3">
+      <label for="roles">Select roles:</label>
+      <select id="roles" name="roles" multiple="multiple">
+        <option th:each="role : ${allRoles}" th:value="${role.id}" th:text="${role.name.substring(5)}" th:selected="${#lists.contains(user.roles, role)}"></option>
+      </select>
+    </div>
     <br/>
     <button type="submit">Update user</button>
 

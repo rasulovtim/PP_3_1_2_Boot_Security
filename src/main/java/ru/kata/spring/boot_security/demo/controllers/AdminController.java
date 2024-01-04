@@ -48,10 +48,13 @@ public class AdminController {
 
     @PostMapping("/add")
     public String createUser(@ModelAttribute("user") @Valid User user,
-                             BindingResult bindingResult) {
+                             BindingResult bindingResult, Model model) {
         userValidator.validate(user, bindingResult);
-        if (bindingResult.hasErrors())
+        if (bindingResult.hasErrors()) {
+            List<Role> roles = roleRepository.findAll();
+            model.addAttribute("allRoles", roles);
             return "add";
+        }
 
         userServiceImpl.add(user);
         return "redirect:/admin";
@@ -68,10 +71,12 @@ public class AdminController {
     }
 
     @PostMapping("/user-update")
-    public String updateUser(@RequestParam("id") long id,
-                             @ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
-        if (bindingResult.hasErrors())
+    public String updateUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            List<Role> roles = roleRepository.findAll();
+            model.addAttribute("allRoles", roles);
             return "user-update";
+        }
         userServiceImpl.update(user, user.getRoles());
         return "redirect:/admin";
     }

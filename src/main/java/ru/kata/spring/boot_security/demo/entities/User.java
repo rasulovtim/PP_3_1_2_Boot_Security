@@ -59,18 +59,19 @@ public class User implements UserDetails {
         this.email = email;
         this.roles = roles;
     }
-
+    /*@Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+    return roles;
+    }*/
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<Role> roles = this.getRoles();
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-
         for (Role role : roles) {
             authorities.add(new SimpleGrantedAuthority(role.getName()));
         }
         return authorities;
     }
-
     @Override
     public String getPassword() {
         return password;
