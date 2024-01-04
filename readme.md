@@ -12,4 +12,3 @@
 |  user@user.ru  |   user   | USER  |
 | admin@admin.ru |  admin   | ADMIN |
 
-> > > > > > > 3_2_Bootstrap
