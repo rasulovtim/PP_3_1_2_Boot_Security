@@ -25,7 +25,6 @@ public class UserController {
             user = userServiceImpl.readUser(id);
         } else {
             String username = principal.getName();
-
             user = userServiceImpl.findByUsername(username);
         }
         model.addAttribute("user", user);

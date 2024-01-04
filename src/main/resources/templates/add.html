@@ -15,9 +15,9 @@
 
 <div class="container">
 
-    <center>
+    <div style="text-align: center;">
         <h1>Hi</h1>
-    </center>
+    </div>
 
     <h2>Add User</h2>
 
@@ -38,13 +38,10 @@
         <br/>
         <br/>
         <div class="mb-3">
-            <label>Roles:</label>
-            <div th:each="role : ${allRoles}">
-                <input type="checkbox" th:id="${'role_' + role.id}"
-                       th:value="${role.id}" th:field="*{roles}"
-                />
-                <label th:for="${'role_' + role.id}" th:text="${role.name}"></label>
-            </div>
+            <label for="roles">Select roles:</label>
+            <select id="roles" name="roles" multiple="multiple">
+                <option th:each="role : ${allRoles}" th:value="${role.id}" th:text="${role.name.substring(5)}"></option>
+            </select>
         </div>
         <br/>
         <br/>
