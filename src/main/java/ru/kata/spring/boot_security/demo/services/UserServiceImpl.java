@@ -14,11 +14,12 @@ import ru.kata.spring.boot_security.demo.entities.User;
 import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
-public class UserServiceImpl implements UserDetailsService, UserService {
+public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -30,14 +31,14 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
-            throw new UsernameNotFoundException("User " + email + " not found");
-        }
-        return user;
-    }
+//    @Override
+//    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+//        User user = userRepository.findByEmail(email);
+//        if (user == null) {
+//            throw new UsernameNotFoundException("User " + email + " not found");
+//        }
+//        return user;
+//    }
 
     @Override
     public List<User> getAll() {
@@ -88,13 +89,15 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public User readUser(long id) {
         return userRepository.findById(id).orElseThrow(() ->
-                new UsernameNotFoundException("User with id = " + id + " not exist"));
+                new EntityNotFoundException("User with id = " + id + " not exist"));
     }
 
     @Override
     @Transactional
     public void delete(long id) {
-        userRepository.deleteById(id);
+        User user = userRepository.findById(id).orElseThrow(()->
+        new EntityNotFoundException("Such user not exists"));
+        userRepository.delete(user);
     }
 
     @Override
