@@ -3,7 +3,7 @@ package ru.kata.spring.boot_security.demo.controllers;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
 import ru.kata.spring.boot_security.demo.entities.Role;
 import ru.kata.spring.boot_security.demo.entities.User;
 import ru.kata.spring.boot_security.demo.services.UserService;
@@ -13,6 +13,7 @@ import java.util.List;
 
 
 @Controller
+@RequestMapping("/user")
 public class UserController {
     private final UserService userService;
 
@@ -20,23 +21,16 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/user")
-    public String showUser(@RequestParam(name = "id", required = false) Long id, Model model, Principal principal) {
-        User user;
-        if (id != null) {
-            user = userService.readUser(id);
-        } else {
-            String email = principal.getName();
-
-            user = userService.findByEmail(email);
-        }
+    @GetMapping
+    public String showUser(Model model, Principal principal) {
+        User user = userService.findByEmail(principal.getName()).orElse(new User());
         List<String> roles = user.getRoles().stream()
                 .map(Role::getName)
                 .map(role -> role.split("_")[1])
                 .toList();
         model.addAttribute("authUser", user);
         model.addAttribute("userRoles", roles);
-        return "/user/user";
+        return "/user/user-info";
     }
 
 }
